@@ -38,9 +38,9 @@ body {
 }
 
 .app {
-    width: min(1100px, 100%);
+    width: min(1100px, calc(100% - 2rem));
     margin: 0 auto;
-    padding: 28px 18px 56px;
+    padding: 26px 18px 56px;
     position: relative;
     z-index: 1;
 }
@@ -62,7 +62,7 @@ body {
     max-width: 680px;
     color: var(--muted);
     line-height: 1.5;
-    font-size: 1rem;
+    font-size: clamp(0.98rem, 2.6vw, 1.05rem);
 }
 
 .eyebrow {
@@ -240,7 +240,7 @@ body {
 
 .panel-header h2 {
     margin: 2px 0 0;
-    font-size: 1.3rem;
+    font-size: clamp(1.15rem, 2.8vw, 1.35rem);
 }
 
 .panel-note {
@@ -370,6 +370,36 @@ body {
     .panel-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+@media (max-width: 720px) {
+    .app {
+        width: calc(100% - 1.5rem);
+        padding: 22px 12px 40px;
+    }
+
+    .hourly-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+        gap: 10px;
+        overflow-x: visible;
+        padding-bottom: 0;
+        scroll-snap-type: none;
+    }
+
+    .hour-item {
+        min-width: 0;
+        scroll-snap-align: unset;
+    }
+
+    .orb {
+        width: 140px;
+        height: 140px;
+    }
+
+    .current-icon {
+        font-size: 2.6rem;
     }
 }
 
