@@ -215,7 +215,7 @@ function renderDaily(data) {
             <p class="day">${day}</p>
             <p class="day-icon">${label.icon}</p>
             <p class="day-temp">${minTemp} / ${maxTemp}</p>
-            <p class="day-pop">${rain}</p>
+            <p class="day-pop">\ud83c\udf27\ufe0f ${rain}</p>
         `;
         dailyListElement.appendChild(row);
     }
@@ -270,10 +270,11 @@ function getWeatherLabel(code) {
 
     if ([71, 73, 75, 77].includes(code)) return { text: "Nieve", icon: "\u2744\ufe0f" };
     if ([80, 81, 82].includes(code)) return { text: "Chubascos", icon: "\ud83c\udf27\ufe0f" };
+    if (code === 85 || code === 86) return { text: "Chubascos de nieve", icon: "\u2744\ufe0f" };
 
     if ([95, 96, 99].includes(code)) return { text: "Tormenta", icon: "\u26c8\ufe0f" };
 
-    return { text: "Tiempo variable", icon: "\ud83c\udf21\ufe0f" };
+    return { text: "Tiempo variable", icon: "\u2601\ufe0f" };
 }
 
 function getWeatherTheme(code) {
