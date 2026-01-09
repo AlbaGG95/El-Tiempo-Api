@@ -345,6 +345,37 @@ body::after {
     font-size: 0.95rem;
 }
 
+.timeline-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.timeline-item {
+    background: var(--card-strong);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 12px;
+    display: grid;
+    gap: 6px;
+    box-shadow: var(--shadow-color);
+}
+
+.timeline-value {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.timeline-label {
+    margin: 0;
+    color: var(--muted-color);
+    font-size: 0.9rem;
+}
+
 .hourly-list {
     display: flex;
     gap: 12px;
@@ -487,6 +518,10 @@ body::after {
         overflow-x: visible;
         padding-bottom: 0;
         scroll-snap-type: none;
+    }
+
+    .timeline-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .hour-item {

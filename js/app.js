@@ -2,6 +2,7 @@ const temperatureElement = document.querySelector(".temperature");
 const descriptionElement = document.querySelector(".description");
 const hourlyListElement = document.querySelector(".hourly-list");
 const dailyListElement = document.querySelector(".daily-list");
+const timelineListElement = document.querySelector(".timeline-list");
 const windElement = document.querySelector("[data-wind]");
 const updatedElement = document.querySelector("[data-updated]");
 const locationNameElement = document.querySelector(".location-name");
@@ -82,7 +83,7 @@ async function fetchWeather(lat, lon, locationLabel = "Tu ubicacion", detail = "
         `&longitude=${lon}` +
         "&current_weather=true" +
         "&hourly=temperature_2m,precipitation_probability,weathercode" +
-        "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode" +
+        "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,sunrise,sunset" +
         "&timezone=auto";
 
     try {
@@ -100,6 +101,7 @@ async function fetchWeather(lat, lon, locationLabel = "Tu ubicacion", detail = "
         renderCurrent(data);
         renderHourly(data);
         renderDaily(data);
+        renderTimeline(data);
 
         showStatus(`Mostrando pronostico para ${locationLabel}.`);
     } catch (error) {
@@ -227,6 +229,87 @@ function renderDaily(data) {
             <p class="day-pop">\ud83c\udf27\ufe0f ${rain}</p>
         `;
         dailyListElement.appendChild(row);
+    }
+}
+
+function renderTimeline(data) {
+    if (!timelineListElement) return;
+    timelineListElement.innerHTML = "";
+
+    const sunrise = data.daily?.sunrise?.[0];
+    const sunset = data.daily?.sunset?.[0];
+    const todayKey = data.daily?.time?.[0];
+    const hourlyTimes = data.hourly?.time || [];
+    const hourlyTemps = data.hourly?.temperature_2m || [];
+
+    const todaysIndexes = [];
+    if (todayKey) {
+        for (let i = 0; i < hourlyTimes.length; i++) {
+            const timeStr = hourlyTimes[i];
+            if (typeof timeStr === "string" && timeStr.startsWith(todayKey)) {
+                todaysIndexes.push(i);
+            }
+        }
+    }
+
+    let maxInfo = null;
+    let minInfo = null;
+
+    for (const idx of todaysIndexes) {
+        const temp = hourlyTemps[idx];
+        const timeStr = hourlyTimes[idx];
+        if (!Number.isFinite(temp) || !timeStr) continue;
+
+        if (!maxInfo || temp > maxInfo.temp) {
+            maxInfo = { temp, time: timeStr };
+        }
+        if (!minInfo || temp < minInfo.temp) {
+            minInfo = { temp, time: timeStr };
+        }
+    }
+
+    const timelineItems = [];
+
+    if (sunrise) {
+        timelineItems.push({
+            icon: "🌅",
+            value: formatHour(sunrise),
+            label: "Amanecer",
+        });
+    }
+
+    if (maxInfo) {
+        timelineItems.push({
+            icon: "🔥",
+            value: `${formatHour(maxInfo.time)} · ${Math.round(maxInfo.temp)}°`,
+            label: "Hora más cálida",
+        });
+    }
+
+    if (sunset) {
+        timelineItems.push({
+            icon: "🌇",
+            value: formatHour(sunset),
+            label: "Atardecer",
+        });
+    }
+
+    if (minInfo) {
+        timelineItems.push({
+            icon: "❄️",
+            value: `${formatHour(minInfo.time)} · ${Math.round(minInfo.temp)}°`,
+            label: "Hora más fría",
+        });
+    }
+
+    for (const item of timelineItems) {
+        const node = document.createElement("div");
+        node.className = "timeline-item";
+        node.innerHTML = `
+            <p class="timeline-value">${item.icon} ${item.value}</p>
+            <p class="timeline-label">${item.label}</p>
+        `;
+        timelineListElement.appendChild(node);
     }
 }
 
