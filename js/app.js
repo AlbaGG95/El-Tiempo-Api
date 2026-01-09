@@ -199,11 +199,20 @@ function renderDaily(data) {
     if (!dailyListElement) return;
     dailyListElement.innerHTML = "";
 
-    const daysToShow = Math.min(7, dates.length);
+    const daysToShow = Math.min(
+        7,
+        dates.length,
+        max.length,
+        min.length,
+        popMax.length,
+        codes.length
+    );
 
     for (let i = 0; i < daysToShow; i++) {
         const day = formatDay(dates[i]);
-        const label = getWeatherLabel(codes[i]);
+        const numericCode = Number(codes[i]);
+        const safeCode = Number.isFinite(numericCode) ? numericCode : -1;
+        const label = getWeatherLabel(safeCode);
 
         const minTemp = Number.isFinite(min[i]) ? `${Math.round(min[i])}\u00b0` : "--\u00b0";
         const maxTemp = Number.isFinite(max[i]) ? `${Math.round(max[i])}\u00b0` : "--\u00b0";
@@ -259,14 +268,16 @@ function getCurrentPrecipProbability(data) {
 }
 
 function getWeatherLabel(code) {
+    if (!Number.isFinite(code)) return { text: "Tiempo variable", icon: "\u2601\ufe0f" };
+
     if (code === 0) return { text: "Cielo despejado", icon: "\u2600\ufe0f" };
     if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "\ud83c\udf24\ufe0f" };
     if (code === 3) return { text: "Nublado", icon: "\u2601\ufe0f" };
     if (code === 45 || code === 48) return { text: "Niebla", icon: "\ud83c\udf2b\ufe0f" };
 
-    if ([51, 53, 55].includes(code)) return { text: "Llovizna", icon: "\ud83c\udf26\ufe0f" };
-    if ([61, 63, 65].includes(code)) return { text: "Lluvia", icon: "\ud83c\udf27\ufe0f" };
-    if ([66, 67].includes(code)) return { text: "Lluvia helada", icon: "\ud83c\udf28\ufe0f" };
+    if (code >= 51 && code <= 57) return { text: "Llovizna", icon: "\ud83c\udf26\ufe0f" };
+    if (code >= 61 && code <= 65) return { text: "Lluvia", icon: "\ud83c\udf27\ufe0f" };
+    if (code === 66 || code === 67) return { text: "Lluvia helada", icon: "\ud83c\udf28\ufe0f" };
 
     if ([71, 73, 75, 77].includes(code)) return { text: "Nieve", icon: "\u2744\ufe0f" };
     if ([80, 81, 82].includes(code)) return { text: "Chubascos", icon: "\ud83c\udf27\ufe0f" };
