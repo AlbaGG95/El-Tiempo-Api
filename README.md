@@ -1,79 +1,224 @@
-# El Tiempo
 
-Aplicacion web mobile-first que consume la API publica Open-Meteo para mostrar el tiempo actual, las proximas 12 horas y un resumen de los proximos dias. El diseno esta pensado para movil: cartas tipo glass, gradientes y tipografia marcada.
+El Tiempo (Api) 🌦️
 
-- Ubicacion predeterminada: 08186 Lli\u00e7\u00e0 d'Amunt (Barcelona) sin pedir permisos.
-- Boton opcional "Usar mi ubicacion" para quien quiera geolocalizarse.
-- Pronostico por horas y por dias con iconos y probabilidad de lluvia.
+Aplicación web mobile-first desarrollada en HTML, CSS y JavaScript que consume la API pública Open-Meteo para mostrar el tiempo actual, el pronóstico de las próximas horas y un resumen de los próximos días.
 
----
+El proyecto está orientado a dispositivos móviles, con una interfaz clara y moderna basada en tarjetas tipo glassmorphism, gradientes suaves y una jerarquía visual pensada para una lectura rápida.
 
-## Tecnologias
+Este proyecto forma parte de un ejercicio individual académico, donde se evalúan tanto la calidad técnica como la organización del código y la documentación.
 
-- HTML5 para la estructura.
-- CSS3 para el diseno responsive y los gradientes.
-- JavaScript (ES6) para la logica y el consumo de la API.
-- Open-Meteo como proveedor de datos meteorologicos (sin API key).
 
----
+---------------------------------------------------------------------------------------------
 
-## Como usar el proyecto
+🎯 Objetivo del proyecto
 
-1) Clona el repositorio  
-```bash
-git clone https://github.com/AlbaGG95/El-Tiempo-Api.git
-cd El-Tiempo-Api
-```
+Consumir una API externa real (Open-Meteo).
 
-2) Abre `index.html` en tu navegador (o usa la extension Live Server en VS Code).
+Mostrar información meteorológica relevante de forma clara y usable en móvil.
 
-3) Al cargar, veras el tiempo de Lli\u00e7\u00e0 d'Amunt.  
-   - Pulsa "Ver Lli\u00e7\u00e0 d'Amunt" para refrescar el pronostico predeterminado.  
-   - Pulsa "Usar mi ubicacion" si quieres activar la geolocalizacion y ver tus propios datos.
+Aplicar buenas prácticas de frontend: clean code, estructura de carpetas, responsive design y control de versiones con Git.
 
----
+Documentar correctamente el proceso, incluyendo el uso de IA generativa como herramienta de apoyo.
 
-## API Open-Meteo
+---------------------------------------------------------------------------------------------
 
-Endpoint: `https://api.open-meteo.com/v1/forecast`
 
-Parametros principales:
-- `latitude`, `longitude` - Coordenadas a consultar.
-- `current_weather=true` - Datos en tiempo real (temperatura, viento, codigo meteorologico).
-- `hourly=temperature_2m,precipitation_probability,weathercode` - Serie por horas.
-- `daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode` - Resumen diario.
-- `timezone=auto` - Ajuste automatico de la zona horaria.
+📍 Funcionalidades principales
 
-Coordenadas usadas por defecto: 41.61667, 2.23333 (Lli\u00e7\u00e0 d'Amunt, Barcelona).
+Ubicación predeterminada
+Lliçà d'Amunt (Barcelona, CP 08186), cargada automáticamente sin solicitar permisos.
 
----
+Geolocalización opcional
+Botón “Usar mi ubicación” para consultar el tiempo real del usuario si concede permisos.
 
-## Estructura del proyecto
+Bloque “Ahora”
 
-```
-index.html       # Maquetacion y layout principal
-index.css        # Estilos, gradientes y comportamiento responsive
-js/app.js        # Logica, fetch a Open-Meteo y renderizado dinamico
-```
+Temperatura actual
 
----
+Estado del cielo
 
-## Flujo de la app
+Viento
 
-1. Carga inicial: se piden los datos de Lli\u00e7\u00e0 d'Amunt sin permisos de geolocalizacion.  
-2. Geolocalizacion opcional: el boton "Usar mi ubicacion" solicita permiso y actualiza el pronostico si se concede.  
-3. Renderizado: se pintan el bloque "Ahora", el carrusel de 12 horas y el resumen de 7 dias.  
-4. Gestion de errores: mensajes claros si falla la conexion o si no se puede obtener la ubicacion.
+Mensaje interpretativo (“clima humano”)
 
----
+Pronóstico próximas 12 horas
 
-## Despliegue
+Temperatura
 
-El proyecto esta publicado en GitHub Pages:  
-https://AlbaGG95.github.io/El-Tiempo-Api/
+Probabilidad de lluvia
 
----
+Iconos meteorológicos
 
-## Uso de IA
+Resumen semanal
 
-Se ha utilizado IA generativa para acelerar la maquetacion, refinar el estilo visual y revisar textos. Todo el codigo final ha sido comprendido, probado y ajustado manualmente.
+Máxima / mínima diaria
+
+Probabilidad de lluvia claramente indicada
+
+Iconografía robusta y compatible
+
+Timeline del día
+
+Amanecer
+
+Hora más cálida
+
+Atardecer
+
+Hora más fría
+
+---------------------------------------------------------------------------------------------
+
+
+🛠️ Tecnologías utilizadas
+
+HTML5
+Estructura semántica de la aplicación.
+
+CSS3
+Diseño responsive, gradientes, glassmorphism, variables CSS y micro-interacciones.
+
+JavaScript (ES6)
+Lógica de la aplicación, consumo de la API, procesamiento de datos y renderizado dinámico del DOM.
+
+Open-Meteo API
+Proveedor de datos meteorológicos sin necesidad de API key.
+
+
+---------------------------------------------------------------------------------------------
+
+🌐 API Open-Meteo
+
+Endpoint principal:
+
+https://api.open-meteo.com/v1/forecast
+
+
+Parámetros utilizados:
+
+latitude, longitude – Coordenadas a consultar.
+
+current_weather=true – Datos actuales (temperatura, viento, código meteorológico).
+
+hourly=temperature_2m,precipitation_probability,weathercode – Pronóstico por horas.
+
+daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,sunrise,sunset – Resumen diario.
+
+timezone=auto – Ajuste automático de la zona horaria.
+
+Coordenadas por defecto:
+
+41.61667, 2.23333 (Lliçà d'Amunt, Barcelona)
+
+---------------------------------------------------------------------------------------------
+
+
+📂 Estructura del proyecto
+El-Tiempo-Api/
+│
+├── index.html          # Maquetación y layout principal
+├── index.css           # Estilos, temas y responsive
+├── js/
+│   └── app.js          # Lógica, fetch a Open-Meteo y renderizado
+│
+├── assets/
+│   ├── img/            # Fondos dinámicos según el clima
+│   └── screenshots/    # Capturas del resultado final
+│
+└── README.md           # Documentación del proyecto
+
+
+La estructura está pensada para facilitar la lectura del código y su mantenimiento.
+
+
+---------------------------------------------------------------------------------------------
+
+🔄 Flujo de funcionamiento
+
+Carga inicial
+Se solicita el tiempo de la ubicación predeterminada sin pedir permisos.
+
+Geolocalización (opcional)
+Si el usuario lo desea, puede activar su ubicación para ver su propio pronóstico.
+
+Procesamiento de datos
+Los datos recibidos de la API se normalizan y se mapean a textos, iconos y temas visuales seguros.
+
+Renderizado dinámico
+Se muestran los bloques:
+
+Ahora
+
+Timeline del día
+
+Próximas horas
+
+Resumen semanal
+
+Gestión de errores
+Mensajes claros si falla la conexión o la geolocalización.
+
+---------------------------------------------------------------------------------------------
+
+🚀 Despliegue
+
+La aplicación está publicada en GitHub Pages:
+
+👉 https://AlbaGG95.github.io/El-Tiempo-Api/
+
+---------------------------------------------------------------------------------------------
+
+🔧 Control de versiones
+
+Trabajo con ramas (dev, feat/*, fix/*).
+
+Uso de conventional commits (feat, fix, chore, docs).
+
+main contiene únicamente la versión final estable lista para despliegue.
+
+---------------------------------------------------------------------------------------------
+
+🤖 Uso de Inteligencia Artificial
+
+Se ha utilizado IA generativa como herramienta de apoyo durante el desarrollo para:
+
+Proponer mejoras de UX/UI.
+
+Ayudar en la organización del código y la estructura del proyecto.
+
+Revisar la documentación y los textos del README.
+
+Detectar y corregir errores lógicos (mapeo de códigos meteorológicos, iconos, etc.).
+
+Importante:
+La IA no ha generado el proyecto de forma automática.
+Todo el código ha sido entendido, probado, adaptado y validado manualmente, incluyendo pruebas en resolución móvil y revisión de cada cambio antes de integrarlo.
+
+
+📸 Captura del resultado
+
+### Vista principal (móvil)
+![Vista principal](assets/screenshots/mobileNowView.png)
+
+### Pronóstico por horas
+![Pronóstico por horas](assets/screenshots/mobileHourlyForecast.png)
+
+### Resumen semanal
+![Resumen semanal](assets/screenshots/mobileWeeklySummary.png)
+
+### Momentos clave del día
+![Timeline diario](assets/screenshots/mobileDailyTimeline.png)
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+✍️ Autoría
+
+Proyecto desarrollado de forma individual como ejercicio académico de frontend, siguiendo las indicaciones del enunciado y buenas prácticas de desarrollo web.
