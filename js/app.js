@@ -8,6 +8,7 @@ const locationNameElement = document.querySelector(".location-name");
 const locationDetailElement = document.querySelector(".location-detail");
 const statusElement = document.querySelector("[data-status]");
 const currentIconElement = document.querySelector(".current-icon");
+const insightElement = document.querySelector("[data-insight]");
 const useGeoButton = document.querySelector("[data-use-geolocation]");
 const loadDefaultButton = document.querySelector("[data-load-default]");
 
@@ -113,6 +114,7 @@ function renderCurrent(data) {
     const code = data.current_weather?.weathercode;
     const windspeed = data.current_weather?.windspeed;
     const time = data.current_weather?.time;
+    const precipProb = getCurrentPrecipProbability(data);
 
     const label = getWeatherLabel(code);
     const theme = getWeatherTheme(code);
@@ -141,6 +143,11 @@ function renderCurrent(data) {
 
     if (updatedElement) {
         updatedElement.textContent = `Actualizado ${formatHour(time || new Date().toISOString())}`;
+    }
+
+    const insight = getWeatherInsight(temperature, windspeed, precipProb, code);
+    if (insightElement) {
+        insightElement.textContent = insight;
     }
 }
 
@@ -240,6 +247,17 @@ function getCurrentHourKey() {
     )}`;
 }
 
+function getCurrentPrecipProbability(data) {
+    const times = data.hourly?.time || [];
+    const pops = data.hourly?.precipitation_probability || [];
+    const nowHourKey = getCurrentHourKey();
+    const idx = times.findIndex((t) => typeof t === "string" && t.startsWith(nowHourKey));
+    if (idx !== -1 && Number.isFinite(pops[idx])) {
+        return pops[idx];
+    }
+    return 0;
+}
+
 function getWeatherLabel(code) {
     if (code === 0) return { text: "Cielo despejado", icon: "\u2600\ufe0f" };
     if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "\ud83c\udf24\ufe0f" };
@@ -270,6 +288,46 @@ function getWeatherTheme(code) {
     }
     if ((code >= 71 && code <= 77) || code === 85 || code === 86) return "snowy";
     return "cloudy";
+}
+
+function getWeatherInsight(temperature, windspeed, precipProbability, code) {
+    const temp = Number(temperature);
+    const wind = Number(windspeed);
+    const precip = Number(precipProbability);
+
+    if (Number.isFinite(precip) && precip >= 60) {
+        return "Posible lluvia · Lleva paraguas";
+    }
+
+    if ([95, 96, 99].includes(code)) {
+        return "Tormenta en camino · Refúgiate";
+    }
+
+    if (Number.isFinite(wind) && wind >= 35) {
+        return "Viento notable · Evita zonas expuestas";
+    }
+
+    if (Number.isFinite(temp) && temp >= 30) {
+        return "Mucho calor · Hidrátate";
+    }
+
+    if (Number.isFinite(temp) && temp >= 22) {
+        return "Temperatura suave · Buen momento para salir";
+    }
+
+    if (Number.isFinite(temp) && temp >= 14) {
+        return "Agradable con brisa · Ideal para pasear";
+    }
+
+    if (Number.isFinite(temp) && temp >= 8) {
+        return "Sensación fresca · Abrígate ligeramente";
+    }
+
+    if (Number.isFinite(temp)) {
+        return "Frío notable · Lleva abrigo";
+    }
+
+    return "Condiciones cambiantes · Revísalo en minutos";
 }
 
 function showStatus(message) {

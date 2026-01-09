@@ -253,6 +253,15 @@ body::after {
     font-size: 1.05rem;
 }
 
+.insight {
+    margin: 0 0 12px;
+    color: var(--muted-color);
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .current-meta {
     display: flex;
     flex-wrap: wrap;
