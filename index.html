@@ -5,42 +5,90 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>El Tiempo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="index.css" />
 </head>
 
 <body>
+    <div class="background-glow"></div>
     <div class="app">
 
         <header class="header">
-            <h1>El Tiempo</h1>
-            <p class="subtitle">Previsión meteorológica local</p>
+            <div class="title-block">
+                <p class="eyebrow">Open-Meteo &middot; Datos en vivo</p>
+                <h1>El Tiempo</h1>
+                <p class="subtitle">Pron&oacute;stico hiperlocal para hoy, pr&oacute;ximas horas y los pr&oacute;ximos
+                    d&iacute;as.</p>
+            </div>
+
+            <div class="header-actions">
+                <div class="location-chip">
+                    <span class="location-icon">&#128205;</span>
+                    <div>
+                        <p class="location-name">Lli&ccedil;&agrave; d'Amunt, Barcelona</p>
+                        <p class="location-detail">CP 08186 &middot; Predeterminado</p>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn primary" data-load-default>Ver Lli&ccedil;&agrave; d'Amunt</button>
+                    <button class="btn ghost" data-use-geolocation>Usar mi ubicaci&oacute;n</button>
+                </div>
+                <p class="status" data-status>Listo para obtener el pron&oacute;stico.</p>
+            </div>
         </header>
 
         <main class="main">
 
-            <section class="current-weather">
-                <h2>Ahora</h2>
-                <div class="weather-card">
-                    <p class="temperature">-- °C</p>
-                    <p class="description">Cargando...</p>
+            <section class="current">
+                <div class="current-card glass">
+                    <div class="current-info">
+                        <p class="eyebrow">Ahora</p>
+                        <p class="temperature">-- &deg;C</p>
+                        <p class="description">Cargando...</p>
+                        <div class="current-meta">
+                            <span class="chip" data-wind>Viento -- km/h</span>
+                            <span class="chip" data-updated>Actualizado --:--</span>
+                        </div>
+                    </div>
+                    <div class="current-visual">
+                        <div class="orb">
+                            <span class="current-icon">&#9728;&#65039;</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section class="hourly-weather">
-                <h2>Próximas horas</h2>
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Pr&oacute;ximas horas</p>
+                        <h2>Pron&oacute;stico 12h</h2>
+                    </div>
+                    <p class="panel-note">Temperatura &middot; Probabilidad de lluvia</p>
+                </div>
                 <div class="hourly-list"></div>
             </section>
 
-            <section class="daily-weather">
-                <h2>Próximos días</h2>
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow">Pr&oacute;ximos d&iacute;as</p>
+                        <h2>Resumen semanal</h2>
+                    </div>
+                    <p class="panel-note">M&aacute;xima / m&iacute;nima &middot; Lluvia</p>
+                </div>
                 <div class="daily-list"></div>
             </section>
 
         </main>
 
         <footer class="footer">
-            <p>Datos meteorológicos proporcionados por Open-Meteo</p>
-            <p>Proyecto Frontend · Factoría F5</p>
+            <p>Datos meteorol&oacute;gicos proporcionados por Open-Meteo</p>
+            <p>Proyecto Frontend &middot; Factor&iacute;a F5</p>
         </footer>
 
     </div>

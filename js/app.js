@@ -2,25 +2,79 @@ const temperatureElement = document.querySelector(".temperature");
 const descriptionElement = document.querySelector(".description");
 const hourlyListElement = document.querySelector(".hourly-list");
 const dailyListElement = document.querySelector(".daily-list");
+const windElement = document.querySelector("[data-wind]");
+const updatedElement = document.querySelector("[data-updated]");
+const locationNameElement = document.querySelector(".location-name");
+const locationDetailElement = document.querySelector(".location-detail");
+const statusElement = document.querySelector("[data-status]");
+const currentIconElement = document.querySelector(".current-icon");
+const useGeoButton = document.querySelector("[data-use-geolocation]");
+const loadDefaultButton = document.querySelector("[data-load-default]");
+
+const DEFAULT_LOCATION = {
+    name: "Lli\u00e7\u00e0 d'Amunt, Barcelona",
+    detail: "CP 08186 \u00b7 Predeterminado",
+    latitude: 41.61667,
+    longitude: 2.23333,
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    attachEvents();
+    fetchWeather(
+        DEFAULT_LOCATION.latitude,
+        DEFAULT_LOCATION.longitude,
+        DEFAULT_LOCATION.name,
+        DEFAULT_LOCATION.detail
+    );
+});
+
+function attachEvents() {
+    loadDefaultButton?.addEventListener("click", () => {
+        fetchWeather(
+            DEFAULT_LOCATION.latitude,
+            DEFAULT_LOCATION.longitude,
+            DEFAULT_LOCATION.name,
+            DEFAULT_LOCATION.detail
+        );
+    });
+
+    useGeoButton?.addEventListener("click", getUserLocation);
+}
 
 function getUserLocation() {
     if (!navigator.geolocation) {
-        descriptionElement.textContent = "Geolocalización no soportada";
+        showStatus("Geolocalizacion no disponible. Mostrando Lli\u00e7\u00e0 d'Amunt.");
+        fetchWeather(
+            DEFAULT_LOCATION.latitude,
+            DEFAULT_LOCATION.longitude,
+            DEFAULT_LOCATION.name,
+            DEFAULT_LOCATION.detail
+        );
         return;
     }
+
+    showStatus("Buscando tu ubicacion...");
 
     navigator.geolocation.getCurrentPosition(
         (position) => {
             const { latitude, longitude } = position.coords;
-            fetchWeather(latitude, longitude);
+            fetchWeather(latitude, longitude, "Tu ubicacion", "Detectado por tu dispositivo");
         },
         () => {
-            descriptionElement.textContent = "Permiso de ubicación denegado";
+            showStatus("No se pudo usar tu ubicacion. Mostrando Lli\u00e7\u00e0 d'Amunt.");
+            fetchWeather(
+                DEFAULT_LOCATION.latitude,
+                DEFAULT_LOCATION.longitude,
+                DEFAULT_LOCATION.name,
+                DEFAULT_LOCATION.detail
+            );
         }
     );
 }
 
-async function fetchWeather(lat, lon) {
+async function fetchWeather(lat, lon, locationLabel = "Tu ubicacion", detail = "") {
+    showStatus(`Actualizando pronostico para ${locationLabel}...`);
+
     const url =
         "https://api.open-meteo.com/v1/forecast" +
         `?latitude=${lat}` +
@@ -32,13 +86,24 @@ async function fetchWeather(lat, lon) {
 
     try {
         const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Respuesta no valida: ${response.status}`);
+        }
+
         const data = await response.json();
+
+        if (locationNameElement) locationNameElement.textContent = locationLabel;
+        setLocationDetail(detail || "Datos en tiempo real");
 
         renderCurrent(data);
         renderHourly(data);
         renderDaily(data);
+
+        showStatus(`Mostrando pronostico para ${locationLabel}.`);
     } catch (error) {
-        descriptionElement.textContent = "Error al obtener el tiempo";
+        if (descriptionElement) descriptionElement.textContent = "Error al obtener el tiempo";
+        showStatus("No se pudo actualizar el tiempo. Revisa la conexion.");
         console.error(error);
     }
 }
@@ -46,13 +111,32 @@ async function fetchWeather(lat, lon) {
 function renderCurrent(data) {
     const temperature = data.current_weather?.temperature;
     const code = data.current_weather?.weathercode;
+    const windspeed = data.current_weather?.windspeed;
+    const time = data.current_weather?.time;
 
     const label = getWeatherLabel(code);
 
-    temperatureElement.textContent =
-        typeof temperature === "number" ? `${temperature.toFixed(1)} °C` : "-- °C";
+    if (temperatureElement) {
+        temperatureElement.textContent =
+            typeof temperature === "number" ? `${temperature.toFixed(1)} \u00b0C` : "-- \u00b0C";
+    }
 
-    descriptionElement.textContent = `${label.icon} ${label.text}`;
+    if (descriptionElement) {
+        descriptionElement.textContent = `${label.icon} ${label.text}`;
+    }
+    if (currentIconElement) {
+        currentIconElement.textContent = label.icon;
+    }
+
+    const windText =
+        typeof windspeed === "number" ? `${Math.round(windspeed)} km/h` : "-- km/h";
+    if (windElement) {
+        windElement.textContent = `Viento ${windText}`;
+    }
+
+    if (updatedElement) {
+        updatedElement.textContent = `Actualizado ${formatHour(time || new Date().toISOString())}`;
+    }
 }
 
 function renderHourly(data) {
@@ -61,10 +145,11 @@ function renderHourly(data) {
     const pops = data.hourly?.precipitation_probability || [];
     const codes = data.hourly?.weathercode || [];
 
+    if (!hourlyListElement) return;
     hourlyListElement.innerHTML = "";
 
-    const nowIsoHour = new Date().toISOString().slice(0, 13);
-    let startIndex = times.findIndex((t) => t.startsWith(nowIsoHour));
+    const nowHourKey = getCurrentHourKey();
+    let startIndex = times.findIndex((t) => t.startsWith(nowHourKey));
     if (startIndex === -1) startIndex = 0;
 
     const endIndex = Math.min(startIndex + 12, times.length);
@@ -72,17 +157,17 @@ function renderHourly(data) {
     for (let i = startIndex; i < endIndex; i++) {
         const hour = formatHour(times[i]);
         const temp = temps[i];
-        const pop = pops[i];
+        const pop = pops[i] ?? 0;
         const label = getWeatherLabel(codes[i]);
 
         const item = document.createElement("div");
         item.className = "hour-item";
         item.innerHTML = `
-      <p class="hour">${hour}</p>
-      <p class="hour-icon">${label.icon}</p>
-      <p class="hour-temp">${Math.round(temp)}°</p>
-      <p class="hour-pop">${pop}%</p>
-    `;
+            <p class="hour">${hour}</p>
+            <p class="hour-icon">${label.icon}</p>
+            <p class="hour-temp">${Number.isFinite(temp) ? `${Math.round(temp)}\u00b0` : "--"}</p>
+            <p class="hour-pop">${Number.isFinite(pop) ? `${pop}%` : "--%"}</p>
+        `;
         hourlyListElement.appendChild(item);
     }
 }
@@ -94,6 +179,7 @@ function renderDaily(data) {
     const popMax = data.daily?.precipitation_probability_max || [];
     const codes = data.daily?.weathercode || [];
 
+    if (!dailyListElement) return;
     dailyListElement.innerHTML = "";
 
     const daysToShow = Math.min(7, dates.length);
@@ -102,24 +188,33 @@ function renderDaily(data) {
         const day = formatDay(dates[i]);
         const label = getWeatherLabel(codes[i]);
 
+        const minTemp = Number.isFinite(min[i]) ? `${Math.round(min[i])}\u00b0` : "--\u00b0";
+        const maxTemp = Number.isFinite(max[i]) ? `${Math.round(max[i])}\u00b0` : "--\u00b0";
+        const rain = Number.isFinite(popMax[i]) ? `${popMax[i]}%` : "--%";
+
         const row = document.createElement("div");
         row.className = "day-item";
         row.innerHTML = `
-        <p class="day">${day}</p>
-        <p class="day-icon">${label.icon}</p>
-        <p class="day-temp">${Math.round(min[i])}° / ${Math.round(max[i])}°</p>
-        <p class="day-pop">${popMax[i]}%</p>
-    `;
+            <p class="day">${day}</p>
+            <p class="day-icon">${label.icon}</p>
+            <p class="day-temp">${minTemp} / ${maxTemp}</p>
+            <p class="day-pop">${rain}</p>
+        `;
         dailyListElement.appendChild(row);
     }
 }
 
 function formatHour(isoString) {
-    return isoString.slice(11, 16);
+    if (!isoString) return "--:--";
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return isoString.slice(11, 16);
+    return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 }
 
 function formatDay(dateString) {
-    const date = new Date(dateString + "T00:00:00");
+    if (!dateString) return "--";
+    const date = new Date(`${dateString}T00:00:00`);
+    if (Number.isNaN(date.getTime())) return dateString;
     return date.toLocaleDateString("es-ES", {
         weekday: "short",
         day: "2-digit",
@@ -127,22 +222,40 @@ function formatDay(dateString) {
     });
 }
 
-function getWeatherLabel(code) {
-    if (code === 0) return { text: "Despejado", icon: "☀️" };
-    if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "🌤️" };
-    if (code === 3) return { text: "Nublado", icon: "☁️" };
-    if (code === 45 || code === 48) return { text: "Niebla", icon: "🌫️" };
-
-    if ([51, 53, 55].includes(code)) return { text: "Llovizna", icon: "🌦️" };
-    if ([61, 63, 65].includes(code)) return { text: "Lluvia", icon: "🌧️" };
-    if ([66, 67].includes(code)) return { text: "Lluvia helada", icon: "🧊" };
-
-    if ([71, 73, 75, 77].includes(code)) return { text: "Nieve", icon: "❄️" };
-    if ([80, 81, 82].includes(code)) return { text: "Chubascos", icon: "🌧️" };
-
-    if ([95, 96, 99].includes(code)) return { text: "Tormenta", icon: "⛈️" };
-
-    return { text: "Tiempo variable", icon: "🌡️" };
+function getCurrentHourKey() {
+    const now = new Date();
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(
+        now.getHours()
+    )}`;
 }
 
-getUserLocation();
+function getWeatherLabel(code) {
+    if (code === 0) return { text: "Cielo despejado", icon: "\u2600\ufe0f" };
+    if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "\ud83c\udf24\ufe0f" };
+    if (code === 3) return { text: "Nublado", icon: "\u2601\ufe0f" };
+    if (code === 45 || code === 48) return { text: "Niebla", icon: "\ud83c\udf2b\ufe0f" };
+
+    if ([51, 53, 55].includes(code)) return { text: "Llovizna", icon: "\ud83c\udf26\ufe0f" };
+    if ([61, 63, 65].includes(code)) return { text: "Lluvia", icon: "\ud83c\udf27\ufe0f" };
+    if ([66, 67].includes(code)) return { text: "Lluvia helada", icon: "\ud83c\udf28\ufe0f" };
+
+    if ([71, 73, 75, 77].includes(code)) return { text: "Nieve", icon: "\u2744\ufe0f" };
+    if ([80, 81, 82].includes(code)) return { text: "Chubascos", icon: "\ud83c\udf27\ufe0f" };
+
+    if ([95, 96, 99].includes(code)) return { text: "Tormenta", icon: "\u26c8\ufe0f" };
+
+    return { text: "Tiempo variable", icon: "\ud83c\udf21\ufe0f" };
+}
+
+function showStatus(message) {
+    if (statusElement) {
+        statusElement.textContent = message;
+    }
+}
+
+function setLocationDetail(detail) {
+    if (locationDetailElement) {
+        locationDetailElement.textContent = detail;
+    }
+}
