@@ -115,6 +115,11 @@ function renderCurrent(data) {
     const time = data.current_weather?.time;
 
     const label = getWeatherLabel(code);
+    const theme = getWeatherTheme(code);
+
+    if (document.body) {
+        document.body.setAttribute("data-theme", theme);
+    }
 
     if (temperatureElement) {
         temperatureElement.textContent =
@@ -246,6 +251,20 @@ function getWeatherLabel(code) {
     if ([95, 96, 99].includes(code)) return { text: "Tormenta", icon: "\u26c8\ufe0f" };
 
     return { text: "Tiempo variable", icon: "\ud83c\udf21\ufe0f" };
+}
+
+function getWeatherTheme(code) {
+    if (code === 0) return "sunny";
+    if ([1, 2, 3, 45, 48].includes(code)) return "cloudy";
+    if (
+        (code >= 51 && code <= 67) ||
+        (code >= 80 && code <= 82) ||
+        (code >= 95 && code <= 99)
+    ) {
+        return "rainy";
+    }
+    if ((code >= 71 && code <= 77) || code === 85 || code === 86) return "snowy";
+    return "cloudy";
 }
 
 function showStatus(message) {

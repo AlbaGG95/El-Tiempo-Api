@@ -1,40 +1,108 @@
 :root {
-    --bg: #050914;
-    --card: rgba(255, 255, 255, 0.06);
-    --card-strong: rgba(255, 255, 255, 0.1);
-    --border: rgba(255, 255, 255, 0.14);
-    --text: #f7f8fb;
-    --muted: #c4c8d6;
-    --accent: #7ce7ff;
-    --accent-2: #9d7bff;
-    --shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+    --accent-color: #7ce7ff;
+    --text-color: #f7f8fb;
+    --muted-color: #dfe4f2;
+    --card-bg: rgba(7, 12, 22, 0.55);
+    --card-strong: rgba(7, 12, 22, 0.65);
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow-color: 0 20px 70px rgba(0, 0, 0, 0.45);
+    --overlay-color: rgba(3, 7, 18, 0.45);
+}
+
+body {
+    margin: 0;
+    font-family: "Space Grotesk", "Manrope", system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body[data-theme="sunny"] {
+    --accent-color: #ffd166;
+    --text-color: #fefefe;
+    --muted-color: #f4f1e9;
+    --card-bg: rgba(9, 12, 20, 0.5);
+    --card-strong: rgba(9, 12, 20, 0.58);
+    --border-color: rgba(255, 209, 102, 0.35);
+    --shadow-color: 0 20px 70px rgba(255, 209, 102, 0.2);
+    --overlay-color: rgba(5, 8, 18, 0.35);
+    background-image: url("/assets/img/sunnyWeather.jpg");
+}
+
+body[data-theme="cloudy"] {
+    --accent-color: #9fc1ff;
+    --text-color: #f7f8fb;
+    --muted-color: #d9deea;
+    --card-bg: rgba(8, 11, 18, 0.58);
+    --card-strong: rgba(8, 11, 18, 0.66);
+    --border-color: rgba(159, 193, 255, 0.32);
+    --shadow-color: 0 20px 70px rgba(111, 137, 186, 0.32);
+    --overlay-color: rgba(4, 7, 15, 0.5);
+    background-image: url("/assets/img/cloudyWeather.jpg");
+}
+
+body[data-theme="rainy"] {
+    --accent-color: #7ce7ff;
+    --text-color: #f6fbff;
+    --muted-color: #d2e5f0;
+    --card-bg: rgba(5, 8, 14, 0.6);
+    --card-strong: rgba(5, 8, 14, 0.7);
+    --border-color: rgba(124, 231, 255, 0.28);
+    --shadow-color: 0 20px 70px rgba(82, 143, 177, 0.35);
+    --overlay-color: rgba(2, 6, 12, 0.6);
+    background-image: url("/assets/img/rainyWeather.jpg");
+}
+
+body[data-theme="snowy"] {
+    --accent-color: #c4e1ff;
+    --text-color: #f8fbff;
+    --muted-color: #e8f1fb;
+    --card-bg: rgba(8, 12, 20, 0.58);
+    --card-strong: rgba(8, 12, 20, 0.7);
+    --border-color: rgba(196, 225, 255, 0.35);
+    --shadow-color: 0 20px 70px rgba(108, 143, 180, 0.28);
+    --overlay-color: rgba(2, 6, 12, 0.52);
+    background-image: url("/assets/img/snowyWeather.jpg");
 }
 
 * {
     box-sizing: border-box;
 }
 
-body {
-    margin: 0;
-    font-family: "Space Grotesk", "Manrope", system-ui, -apple-system, sans-serif;
-    color: var(--text);
-    background-color: var(--bg);
-    background-image:
-        radial-gradient(1200px 900px at 8% 8%, rgba(79, 154, 255, 0.18), transparent 55%),
-        radial-gradient(900px 800px at 90% 10%, rgba(124, 231, 255, 0.15), transparent 55%),
-        linear-gradient(120deg, #071025 0%, #040813 100%);
-    min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
-}
-
 .background-glow {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(700px 700px at 50% 20%, rgba(157, 123, 255, 0.12), transparent 60%);
-    filter: blur(60px);
-    opacity: 0.85;
+    background:
+        radial-gradient(1200px 900px at 12% 10%, rgba(124, 231, 255, 0.25), transparent 50%),
+        radial-gradient(1000px 700px at 80% 8%, rgba(157, 123, 255, 0.22), transparent 55%);
+    filter: blur(80px);
+    opacity: 0.7;
+    z-index: 0;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(3, 6, 12, 0.55) 0%, rgba(3, 6, 12, 0.78) 100%);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 0;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-color);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .app {
@@ -60,26 +128,27 @@ body {
 .subtitle {
     margin: 0;
     max-width: 680px;
-    color: var(--muted);
+    color: var(--muted-color);
     line-height: 1.5;
     font-size: clamp(0.98rem, 2.6vw, 1.05rem);
 }
 
 .eyebrow {
     margin: 0;
-    color: var(--accent);
+    color: var(--accent-color);
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
 .header-actions {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 14px 16px;
     display: grid;
     gap: 12px;
+    box-shadow: var(--shadow-color);
 }
 
 .location-chip {
@@ -88,9 +157,9 @@ body {
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.06);
     width: fit-content;
 }
 
@@ -105,7 +174,7 @@ body {
 
 .location-detail {
     margin: 2px 0 0;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 0.95rem;
 }
 
@@ -116,9 +185,9 @@ body {
 }
 
 .btn {
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
     background: transparent;
-    color: var(--text);
+    color: var(--text-color);
     padding: 10px 16px;
     border-radius: 12px;
     font-weight: 600;
@@ -129,7 +198,7 @@ body {
 .btn.primary {
     background: linear-gradient(120deg, #7ce7ff, #9d7bff);
     color: #040813;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-color);
     border: none;
 }
 
@@ -146,7 +215,7 @@ body {
 
 .status {
     margin: 0;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 0.95rem;
 }
 
@@ -167,9 +236,9 @@ body {
     align-items: center;
     padding: 22px 20px;
     border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-color);
 }
 
 .current-info .temperature {
@@ -180,7 +249,7 @@ body {
 
 .description {
     margin: 0 0 10px;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 1.05rem;
 }
 
@@ -197,8 +266,8 @@ body {
     padding: 8px 10px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--border);
-    color: var(--text);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
     font-size: 0.95rem;
 }
 
@@ -223,11 +292,11 @@ body {
 }
 
 .panel {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 16px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-color);
 }
 
 .panel-header {
@@ -245,7 +314,7 @@ body {
 
 .panel-note {
     margin: 0;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 0.95rem;
 }
 
@@ -297,7 +366,7 @@ body {
 
 .hour-pop {
     margin: 0;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 0.9rem;
 }
 
@@ -308,7 +377,7 @@ body {
 
 .day-item {
     background: var(--card-strong);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-color);
     border-radius: 14px;
     padding: 12px;
     display: grid;
@@ -337,13 +406,13 @@ body {
 
 .day-pop {
     margin: 0;
-    color: var(--muted);
+    color: var(--muted-color);
     text-align: right;
 }
 
 .footer {
     padding: 18px 0 28px;
-    color: var(--muted);
+    color: var(--muted-color);
     font-size: 0.9rem;
     text-align: center;
 }
@@ -441,5 +510,11 @@ body {
     .day-pop {
         grid-area: pop;
         text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        background-attachment: scroll;
     }
 }
