@@ -271,19 +271,15 @@ function getWeatherLabel(code) {
     if (!Number.isFinite(code)) return { text: "Tiempo variable", icon: "\u2601\ufe0f" };
 
     if (code === 0) return { text: "Cielo despejado", icon: "\u2600\ufe0f" };
-    if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "\ud83c\udf24\ufe0f" };
+    if (code === 1 || code === 2) return { text: "Poco nuboso", icon: "\u26c5\ufe0f" };
     if (code === 3) return { text: "Nublado", icon: "\u2601\ufe0f" };
-    if (code === 45 || code === 48) return { text: "Niebla", icon: "\ud83c\udf2b\ufe0f" };
+    if (code === 45 || code === 48) return { text: "Niebla", icon: "\u2601\ufe0f" };
 
-    if (code >= 51 && code <= 57) return { text: "Llovizna", icon: "\ud83c\udf26\ufe0f" };
-    if (code >= 61 && code <= 65) return { text: "Lluvia", icon: "\ud83c\udf27\ufe0f" };
-    if (code === 66 || code === 67) return { text: "Lluvia helada", icon: "\ud83c\udf28\ufe0f" };
-
-    if ([71, 73, 75, 77].includes(code)) return { text: "Nieve", icon: "\u2744\ufe0f" };
-    if ([80, 81, 82].includes(code)) return { text: "Chubascos", icon: "\ud83c\udf27\ufe0f" };
+    if (code >= 51 && code <= 67) return { text: "Lluvia", icon: "\ud83c\udf27\ufe0f" };
+    if (code >= 71 && code <= 77) return { text: "Nieve", icon: "\u2744\ufe0f" };
+    if (code >= 80 && code <= 82) return { text: "Chubascos", icon: "\ud83c\udf27\ufe0f" };
     if (code === 85 || code === 86) return { text: "Chubascos de nieve", icon: "\u2744\ufe0f" };
-
-    if ([95, 96, 99].includes(code)) return { text: "Tormenta", icon: "\u26c8\ufe0f" };
+    if (code >= 95 && code <= 99) return { text: "Tormenta", icon: "\u26a1" };
 
     return { text: "Tiempo variable", icon: "\u2601\ufe0f" };
 }
