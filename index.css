@@ -289,6 +289,24 @@ body::after {
 
 .current-icon {
     font-size: 3rem;
+    transition: transform 0.3s ease, filter 0.3s ease, opacity 0.3s ease;
+}
+
+.hour-item,
+.day-item {
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.hour-item:hover,
+.day-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+}
+
+.hour-item:active,
+.day-item:active {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.24);
 }
 
 .panel {
@@ -368,6 +386,11 @@ body::after {
     margin: 0;
     color: var(--muted-color);
     font-size: 0.9rem;
+}
+
+.hour-item.is-current-hour {
+    border-color: var(--accent-color);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
 }
 
 .daily-list {
@@ -516,5 +539,84 @@ body::after {
 @media (max-width: 768px) {
     body {
         background-attachment: scroll;
+    }
+}
+
+body[data-theme="sunny"] .current-icon {
+    animation: sunnyPulse 6s ease-in-out infinite;
+    text-shadow: 0 0 18px rgba(255, 209, 102, 0.55), 0 0 32px rgba(255, 209, 102, 0.35);
+}
+
+body[data-theme="cloudy"] .current-icon {
+    animation: cloudyDrift 7s ease-in-out infinite;
+}
+
+body[data-theme="rainy"] .current-icon {
+    animation: rainyFloat 6s ease-in-out infinite;
+}
+
+body[data-theme="snowy"] .current-icon {
+    animation: snowyFade 7s ease-in-out infinite;
+}
+
+@keyframes sunnyPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.03);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes cloudyDrift {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes rainyFloat {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(4px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes snowyFade {
+    0% {
+        opacity: 0.9;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .current-icon {
+        animation: none !important;
+        transition: none;
+    }
+
+    .hour-item,
+    .day-item {
+        transition: none;
+        transform: none !important;
+        box-shadow: none !important;
     }
 }

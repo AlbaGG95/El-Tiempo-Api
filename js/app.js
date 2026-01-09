@@ -167,6 +167,11 @@ function renderHourly(data) {
 
         const item = document.createElement("div");
         item.className = "hour-item";
+
+        if (typeof times[i] === "string" && times[i].startsWith(nowHourKey)) {
+            item.classList.add("is-current-hour");
+        }
+
         item.innerHTML = `
             <p class="hour">${hour}</p>
             <p class="hour-icon">${label.icon}</p>
