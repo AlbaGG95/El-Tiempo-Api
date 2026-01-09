@@ -91,7 +91,7 @@ Proveedor de datos meteorológicos sin necesidad de API key.
 
 Endpoint principal:
 
-https://api.open-meteo.com/v1/forecast
+](https://open-meteo.com/)
 
 
 Parámetros utilizados:
